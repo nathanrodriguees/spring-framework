@@ -49,9 +49,13 @@ public class MedicoController {
 
 	@PutMapping("/{id}")
 	public String Altera(@RequestBody Medico medico, @PathVariable int id) {
+		
+		medico.setId(id);
 		medico.setNome(medico.getNome());
 		medico.setCrm(medico.getCrm());
+		
 		repository.save(medico);
+		
 		return String.valueOf(medico);
 	}
 
