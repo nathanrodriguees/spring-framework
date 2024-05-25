@@ -64,6 +64,18 @@ public class MedicoController {
 //		return medico;
 //	}
 
+//	@PutMapping("/{id}")
+//	public String Altera(@RequestBody Medico medico, @PathVariable int id) {
+//
+//		medico.setId(id);
+//		medico.setNome(medico.getNome());
+//		medico.setCrm(medico.getCrm());
+//
+//		repository.save(medico);
+//
+//		return String.valueOf(medico);
+//	}
+
 	@PostMapping()
 	public ResponseEntity<Medico> Novo(@RequestBody @Valid Medico medico) {
 		return ResponseEntity.ok(repository.save(medico));
