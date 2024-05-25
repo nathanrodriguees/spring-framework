@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.edu.senaisp.Avaliacao.model.Medico;
 import br.edu.senaisp.Avaliacao.repository.MedicoRepository;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/hospital")
@@ -29,11 +30,21 @@ public class MedicoController {
 		return ResponseEntity.ok(repository.findAll());
 	}
 
+//	@GetMapping("/{id}")
+//	public Optional<Medico> BuscaPorId(@PathVariable int id) {
+//		Optional<Medico> medico = repository.findById(id);
+//
+//		return medico;
+//	}
+
 	@GetMapping("/{id}")
-	public Optional<Medico> BuscaPorId(@PathVariable int id) {
+	public ResponseEntity<Medico> BuscaPorId(@PathVariable int id) {
 		Optional<Medico> medico = repository.findById(id);
 
-		return medico;
+		if (medico.isEmpty())
+			return ResponseEntity.notFound().build();
+		else
+			return ResponseEntity.ok(medico.get());
 	}
 
 //	@PutMapping("/{id}")
@@ -47,22 +58,57 @@ public class MedicoController {
 //		return String.valueOf(tmp);
 //	}
 
-	@PutMapping("/{id}")
-	public String Altera(@RequestBody Medico medico, @PathVariable int id) {
-		medico.setNome(medico.getNome());
-		medico.setCrm(medico.getCrm());
-		repository.save(medico);
-		return String.valueOf(medico);
-	}
+//	@PostMapping()
+//	public Medico Novo(@RequestBody Medico medico) {
+//		repository.save(medico);
+//		return medico;
+//	}
 
 	@PostMapping()
-	public Medico Novo(@RequestBody Medico medico) {
-		repository.save(medico);
-		return medico;
+	public ResponseEntity<Medico> Novo(@RequestBody @Valid Medico medico) {
+		return ResponseEntity.ok(repository.save(medico));
 	}
 
+//	@PutMapping("/{id}")
+//	public String Altera(@RequestBody Medico medico, @PathVariable int id) {
+//
+//		medico.setId(id);
+//		medico.setNome(medico.getNome());
+//		medico.setCrm(medico.getCrm());
+//
+//		repository.save(medico);
+//
+//		return String.valueOf(medico);
+//	}
+
+	@PutMapping("/{id}")
+	public ResponseEntity<Medico> Altera(@RequestBody @Valid Medico medico, @PathVariable int id) {
+
+		try {
+			Medico tmp = repository.findById(id).orElseThrow();
+			tmp.setNome(medico.getNome());
+			tmp.setCrm(medico.getCrm());
+			repository.save(tmp);
+			return ResponseEntity.ok(tmp);
+		} catch (Exception e) {
+			return ResponseEntity.notFound().build();
+		}
+	}
+
+//	@DeleteMapping("/{id}")
+//	public void exclui(@PathVariable int id) {
+//		repository.deleteById(id);
+//	}
+
 	@DeleteMapping("/{id}")
-	public void exclui(@PathVariable int id) {
-		repository.deleteById(id);
+	public ResponseEntity<Medico> excluir(@PathVariable int id) {
+
+		try {
+			Medico medico = repository.findById(id).orElseThrow();
+			repository.deleteById(id);
+			return ResponseEntity.ok(medico);
+		} catch (Exception e) {
+			return ResponseEntity.notFound().build();
+		}
 	}
 }
